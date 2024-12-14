@@ -7,11 +7,11 @@ import SearchBar from '../SearchBar/SearchBar';
 
 interface NavbarProps {
   userInfo: any;
-  onSearchNote: (query: string) => void;
+  onSearchEmployee: (query: string) => void;
   handleClearSearch: () => void;
 }
 
-const Navbar = ({userInfo,onSearchNote,handleClearSearch}:NavbarProps) => {
+const Navbar = ({userInfo,onSearchEmployee,handleClearSearch}:NavbarProps) => {
   const [searchQuery,setSearchQuery] = useState("");
   const navigate = useNavigate(); // Correctly calling useNavigate as a function
 
@@ -23,7 +23,7 @@ const Navbar = ({userInfo,onSearchNote,handleClearSearch}:NavbarProps) => {
 
   const handleSearch = () => {
     if(searchQuery){
-      onSearchNote(searchQuery);
+      onSearchEmployee(searchQuery);
 
     }
   };
