@@ -17,14 +17,14 @@ interface Employee {
   dateOfBirth: string;
   basicSalary: number;
   isActive: boolean;
-  id: string;
+  _id:string;
 }
 
 
 interface AddEditModel {
   type: "add" | "edit";
   data: Employee | null | undefined | any;
-  isShown: boolean;
+  isShown: any;
 }
 
 const Home = () => {
@@ -40,7 +40,7 @@ const Home = () => {
   //get all employee data
   const getData = async () => {
     try {
-        const response = await axios.get("http://localhost:8080/api/v1/getUEmployees");
+        const response = await axios.get("http://127.0.0.1:5000/getUsers");
         console.log(response);
         setAllEmployee(response.data);
         
@@ -53,14 +53,9 @@ const Home = () => {
   };
 
   //delete employee
-  const deleteEmployee = async (empNo:string) => {
+  const deleteEmployee = async (_id:string) => {
     try {
-        const response = await axios.delete(`http://localhost:8080/api/v1/deleteEmploy/${empNo} `, {
-            headers: {
-              accept: "*/*",
-              apiToken: "?D(G+KbPeSgVkYp3s6v9y$B&E)H@McQf",
-            },
-          });
+        const response = await axios.delete(`http://127.0.0.1:5000/deleteEmploy/${_id} `);
       
           // setAllEmployee(response.data);
           getData();
@@ -200,7 +195,7 @@ const Home = () => {
                     </button>
                     <button
                       className="md:sm:font-medium md:sm:text-red-600 md:sm:hover:underline md:ml-4 sm:ml-0 max-sm:text-red-600"
-                      onClick={() => deleteEmployee(item.id)}
+                      onClick={() => deleteEmployee(item._id)}
                     >
                       Delete
                     </button>
@@ -238,7 +233,7 @@ const Home = () => {
           allDepartments={allDepartments}
           employeeData={addEditModel.data}
           onClose={() =>
-            setAddEditModel({ isShown: false, type: "add", data: null })
+            setAddEditModel({ isShown: false, data: null ,type: "add",})
           }
         />
       </Modal>

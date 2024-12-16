@@ -3,6 +3,7 @@ import axios from "axios";
 import { MdClose } from "react-icons/md";
 
 interface EmployeeData {
+  _id:string;
   empNo?: string;
   empName?: string;
   empAddressLine1?: string;
@@ -17,14 +18,15 @@ interface EmployeeData {
 
 interface AddEditEmployeeProps {
   employeeData?: EmployeeData;
-  getData: () => void;
+  getData: any;
   type: "add" | "edit";
-  onClose: () => void;
+  onClose: any;
   allDepartments: string[];
 }
 
 const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddEditEmployeeProps) => {
 
+  const [_id, setId] = useState<string>(employeeData?._id || "");
   const [name, setName] = useState<string>(employeeData?.empName || "");
   const [addressLine1, setAddressLine1] = useState<string>(employeeData?.empAddressLine1 || "");
   const [addressLine2, setAddressLine2] = useState<string>(employeeData?.empAddressLine2 || "");
@@ -41,7 +43,7 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
   const addEmployee = async () => {
     try {
         const response = await axios.post(
-            "http://localhost:8080/api/v1/addEmploy",
+            "http://127.0.0.1:5000/addUser",
             {
               empNo: employNo,
               empName: name,
@@ -54,23 +56,24 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
               basicSalary: salary,
               isActive: active,
             }
-          );
-      
-          getData();
-          onClose();
+          ); 
+          
         
     } catch (error) {
         console.log(error);
-        
     }
+
+    getData();
+    onClose();
 
   };
   // Update Employee
   const editEmployee = async () => {
     try {
         const response = await axios.put(
-            "http://localhost:8080/api/v1/updateEmploy",
+            "http://127.0.0.1:5000/updateEmploy",
             {
+              _id:_id,
               empNo: employNo,
               empName: name,
               empAddressLine1: addressLine1,
@@ -81,14 +84,7 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
               dateOfBirth: dateBirth,
               basicSalary: salary,
               isActive: active,
-            },
-            {
-              headers: {
-                accept: "*/*",
-                apiToken: "?D(G+KbPeSgVkYp3s6v9y$B&E)H@McQf",
-              },
-            }
-          );
+            });
       
           getData();
           onClose();

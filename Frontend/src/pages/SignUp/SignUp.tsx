@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Navbar from '../../components/navbar/navbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PasswordInput from '../../components/input/PasswordInput';
 import { validateEmail } from '../../utils/helper';
 import axios from 'axios';
@@ -11,6 +11,9 @@ const SignUp = () => {
   const [password,setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error,setError] = useState<string | null>(null);
+
+  
+  const navigate = useNavigate();
 
 
 
@@ -38,20 +41,20 @@ const SignUp = () => {
 
               // Sign Up API Call
               try{
-                const response = await axios.post("/create-account",{
+                const response = await axios.post("http://127.0.0.1:5000/create-account",{
                     fullName:name,
                     email:email,
                     password:password,
                 });
+                console.log(response);
                 //Handle successful registration success
                 if(response.data && response.data.error){
                     setError(response.data.message);
                     return;
                 }
-                // if(response.data && response.data.accessToken){
-                //     localStorage.setItem("token",response.data.accessToken);
-                //     navigate("/dashboard")
-                // }
+                if(response.data ){
+                    navigate("/dashboard")
+                }
             }catch(error){
                 setError("Login failed. Please check your credentials and try again.");
             }
@@ -61,11 +64,11 @@ const SignUp = () => {
 
 return (
   <>
-  <Navbar userInfo={undefined} onSearchNote={function (): void {
+  {/* <Navbar userInfo={undefined} onSearchNote={function (): void {
             throw new Error('Function not implemented.');
         } } handleClearSearch={function (): void {
             throw new Error('Function not implemented.');
-        } }/>
+        } }/> */}
   
   <div className="flex items-center justify-center mt-28" >
       <div className="py-10 bg-white border rounded w-96 px-7">

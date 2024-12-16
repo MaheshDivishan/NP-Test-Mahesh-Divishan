@@ -30,13 +30,13 @@ const Login = () => {
 
         // Login API Call
         try{
-            const response = await axios.post("/login",{
+            const response = await axios.post("http://127.0.0.1:5000/login",{
                 email:email,
                 password:password,
             });
             //Handle successful login success
             if(response.data){
-                console.log("navigate");
+                console.log(response.data);
                 navigate("/dashboard");
             }
         }catch(error){
@@ -48,11 +48,11 @@ const Login = () => {
 
   return (
     <>
-    <Navbar userInfo={undefined} onSearchNote={function (): void {
+    {/* <Navbar userInfo={undefined} onSearchNote={function (): void {
               throw new Error('Function not implemented.');
           } } handleClearSearch={function (): void {
               throw new Error('Function not implemented.');
-          } }/>
+          } }/> */}
     
     <div className="flex items-center justify-center mt-28" >
         <div className="py-10 bg-white border rounded w-96 px-7">
