@@ -3,17 +3,12 @@ import axios from "axios";
 import { MdClose } from "react-icons/md";
 
 interface EmployeeData {
+  fullName: string;
+  email: string;
+  password: string;
+  company: string;
+  role:string;
   _id:string;
-  empNo?: string;
-  empName?: string;
-  empAddressLine1?: string;
-  empAddressLine2?: string;
-  empAddressLine3?: string;
-  departmentCode?: string;
-  dateOfJoin?: string;
-  dateOfBirth?: string;
-  basicSalary?: string;
-  isActive?: boolean;
 }
 
 interface AddEditEmployeeProps {
@@ -27,16 +22,11 @@ interface AddEditEmployeeProps {
 const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddEditEmployeeProps) => {
 
   const [_id, setId] = useState<string>(employeeData?._id || "");
-  const [name, setName] = useState<string>(employeeData?.empName || "");
-  const [addressLine1, setAddressLine1] = useState<string>(employeeData?.empAddressLine1 || "");
-  const [addressLine2, setAddressLine2] = useState<string>(employeeData?.empAddressLine2 || "");
-  const [addressLine3, setAddressLine3] = useState<string>(employeeData?.empAddressLine3 || "");
-  const [dateJoin, setDateJoin] = useState<string>(employeeData?.dateOfJoin || "");
-  const [dateBirth, setDateBirth] = useState<string>(employeeData?.dateOfBirth || "");
-  const [department, setDepartment] = useState<string>(employeeData?.departmentCode || "");
-  const [salary, setSalary] = useState<string>(employeeData?.basicSalary || "");
-  const [employNo, setEmploNo] = useState<string>(employeeData?.empNo || "");
-  const [active, setActive] = useState<boolean>(employeeData?.isActive || false);
+  const [name, setName] = useState<string>(employeeData?.fullName || "");
+  const [email, setEmail] = useState<string>(employeeData?.email || "");
+  const [company, setCompany] = useState<string>(employeeData?.company || "");
+  const [role, setRole] = useState<string>(employeeData?.role || "");
+  const [password, setPassword] = useState<string>(employeeData?.password || "");
   const [error, setError] = useState<string | null>(null);
 
   //Add Employee
@@ -45,27 +35,21 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
         const response = await axios.post(
             "http://127.0.0.1:5000/addUser",
             {
-              empNo: employNo,
-              empName: name,
-              empAddressLine1: addressLine1,
-              empAddressLine2: addressLine2,
-              empAddressLine3: addressLine3,
-              departmentCode: department,
-              dateOfJoin: dateJoin,
-              dateOfBirth: dateBirth,
-              basicSalary: salary,
-              isActive: active,
+              fullName:name,
+              email: email,
+              password: password,
+              company: company,
+              role: role,
             }
-          ); 
+          );
           
         
     } catch (error) {
         console.log(error);
     }
-
     getData();
     onClose();
-
+    
   };
   // Update Employee
   const editEmployee = async () => {
@@ -74,16 +58,11 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
             "http://127.0.0.1:5000/updateEmploy",
             {
               _id:_id,
-              empNo: employNo,
-              empName: name,
-              empAddressLine1: addressLine1,
-              empAddressLine2: addressLine2,
-              empAddressLine3: addressLine3,
-              departmentCode: department,
-              dateOfJoin: dateJoin,
-              dateOfBirth: dateBirth,
-              basicSalary: salary,
-              isActive: active,
+              fullName:name,
+              email: email,
+              password: password,
+              company: company,
+              role: role,
             });
       
           getData();
@@ -97,38 +76,26 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
   };
 
   const handleAddEdit = () => {
-    if (!employNo) {
+    if (!name) {
       setError("Please Enter the Employ No");
       return;
     }
 
-    if (!name) {
+    if (!password) {
       setError("Please enter the Name");
       return;
     }
-    if (!salary) {
+    if (!email) {
       setError("Please Enter the Salary");
       return;
     }
-    if (!department) {  
+    if (!company) {  
       setError("Please Enter the Department");
       return;
     }
 
-    if (!dateBirth) {
+    if (!role) {
       setError("Please enter the Date of Birth");
-      return;
-    }
-    if (!dateJoin) {
-      setError("Please enter the Date of Join");
-      return;
-    }
-    if (!addressLine1) {
-      setError("Please enter the Address Line 1");
-      return;
-    }
-    if (!addressLine2) {
-      setError("Please enter the Address Line 2");
       return;
     }
 
@@ -151,18 +118,18 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
           <MdClose className="text-xl text-black-500 " />
         </button>
 
-        {type === "add" ? (        <div className="flex flex-col gap-2">
-          <label className="flex text-black text-m">Employ No</label>
+        {/* {type === "add" ? (        <div className="flex flex-col gap-2">
+          <label className="flex text-black text-m">Name</label>
           <input
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={employNo}
-            onChange={({ target }) => setEmploNo(target.value)}
+            value={name}
+            onChange={({ target }) => setName(target.value)}
           />
-        </div>) : (<div></div>)}
+        </div>) : (<div></div>)} */}
 
         <div className="flex flex-col gap-2 mt-4">
-          <label className="flex text-black text-m">Employ Name</label>
+          <label className="flex text-black text-m">Name</label>
           <input
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -172,89 +139,49 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
         </div>
 
         <div className="flex flex-col gap-2 mt-4">
-          <label className="flex text-black text-m">Addrress Line 1</label>
+          <label className="flex text-black text-m">Email</label>
           <input
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={addressLine1}
-            onChange={({ target }) => setAddressLine1(target.value)}
+            value={email}
+            onChange={({ target }) => setEmail(target.value)}
           />
         </div>
 
         <div className="flex flex-col gap-2 mt-4">
-          <label className="flex text-black text-m">Addrress Line 2</label>
+          <label className="flex text-black text-m">Password</label>
           <input
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={addressLine2}
-            onChange={({ target }) => setAddressLine2(target.value)}
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
           />
         </div>
 
         <div className="flex flex-col gap-2 mt-4">
-          <label className="flex text-black text-m">Addrress Line 3</label>
+          <label className="flex text-black text-m">Company</label>
+          <select
+            value={company}
+            onChange={({ target }) => setCompany(target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          >
+            {type === "add" ? (<option value="">Select Company</option>) : ("")}
+            {allDepartments.map((item:any) => (
+              <option value={item.name}>{item.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-2 mt-4">
+          <label className="flex text-black text-m">Role</label>
           <input
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={addressLine3}
-            onChange={({ target }) => setAddressLine3(target.value)}
-          />
-        </div>
-
-        <div className="flex flex-col gap-2 mt-4">
-          <label className="flex text-black text-m">Salary</label>
-          <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={salary}
-            onChange={({ target }) => setSalary(target.value)}
-          />
-        </div>
-
-        <div className="flex flex-col gap-2 mt-4">
-          <label className="flex text-black text-m">Date of Birth</label>
-          <input
-            type="Date"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={dateBirth.split("T")[0]}
-            onChange={({ target }) => setDateBirth(target.value)}
-          />
-        </div>
-
-        <div className="flex flex-col gap-2 mt-4">
-          <label className="flex text-black text-m">Date of Join</label>
-          <input
-            type="Date"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={dateJoin.split("T")[0]}
-            onChange={({ target }) => setDateJoin(target.value)}
-          />
-        </div>
-
-        <div className="flex flex-col gap-2 mt-4">
-          <label className="flex text-black text-m">Department</label>
-          <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={department}
-            onChange={({ target }) => setDepartment(target.value)}
+            value={role}
+            onChange={({ target }) => setRole(target.value)}
           />
         </div>
         <br />
-
-        <div className="flex items-start mb-5">
-          <label className="font-medium text-gray-900 ms-2 text-m dark:text-gray-300">
-            Active
-          </label>
-          <div className="flex items-center h-5">
-            <input
-              type="checkbox"
-              checked={active}
-              className="w-4 h-4 mt-1 ml-3 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-              onChange={({ target }) => setActive(target.checked)}
-            />
-          </div>
-        </div>
       </div>
 
       <div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ProfileInfo from '../Cards/ProfileInfo';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from '../SearchBar/SearchBar';
 
 
@@ -34,8 +34,18 @@ const Navbar = ({userInfo,onSearchEmployee,handleClearSearch}:NavbarProps) => {
   }
 
   return (
-    <div className='flex items-center justify-between px-6 py-2 bg-white drop-shadow'>
-      <h2 className='py-2 text-xl font-medium text-black'>Notes</h2>
+    <div className="flex items-center justify-between px-6 py-2 bg-gray-200 drop-shadow">
+      <div className="flex items-center space-x-4">
+        <h2 className="py-2 text-xl font-medium text-black">
+          User Management System
+        </h2>
+        <Link to="/dashboard" className="text-gray-700 hover:underline px-[680px] pr-0">
+          User
+        </Link>
+        <Link to="/company" className="text-gray-700 px-9 hover:underline">
+          Company
+        </Link>
+      </div>
       <SearchBar 
       value={searchQuery}
       onChange={e => {

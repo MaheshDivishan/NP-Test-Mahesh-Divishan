@@ -10,6 +10,8 @@ const SignUp = () => {
   const [email, setEmail] = useState<string>("");
   const [password,setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [role, setRole] = useState<string>("Admin");
+  const [company, setCompany] = useState<string>("");
   const [error,setError] = useState<string | null>(null);
 
   
@@ -45,6 +47,8 @@ const SignUp = () => {
                     fullName:name,
                     email:email,
                     password:password,
+                    role:role,
+                    company:company
                 });
                 console.log(response);
                 //Handle successful registration success

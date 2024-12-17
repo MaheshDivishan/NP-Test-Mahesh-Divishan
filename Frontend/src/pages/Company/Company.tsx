@@ -1,56 +1,55 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import AddEditEmployee from "./AddEditEmployee";
+import AddEditEmployee from "./AddEditCompany";
 import Modal from "react-modal";
 import Navbar from "../../components/navbar/navbar";
 import ReactPaginate from "react-paginate";
 
 
-interface Employee {
-  fullName: string;
-  email: string;
-  password: string;
-  company: string;
-  role:string;
+interface Company {
+  name: string;
+  id: string;
+  count: string;
   _id:string;
 }
 
 
 interface AddEditModel {
   type: "add" | "edit";
-  data: Employee | null | undefined | any;
+  data: Company | null | undefined | any;
   isShown: any;
 }
 
-interface Company {
-  name: string;
-  id: string;
-  count: string;
-  _id: string;
-}
+interface Employee {
+    fullName: string;
+    email: string;
+    password: string;
+    company: string;
+    role:string;
+    _id:string;
+  }
 
-const Home = () => {
-  const [allEmployee, setAllEmployee] = useState<Employee[]>([]);
+const Company = () => {
+  const [allCompany, setAllCompany] = useState<Company[]>([]);
   const [addEditModel, setAddEditModel] = useState<AddEditModel>({
     type: "add",
     data: null,
     isShown: false,
   });
-  const [allDepartments, setAllDepartments] = useState<any>([]);
-  const [uploading, setUploading] = useState<boolean>(false);;
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [allUsers, setAllUsers] = useState<Employee[]>([]);
 
   const rowsPerPage:number = 7; 
   const offset:number = currentPage * rowsPerPage;
-  const currentEmployees:Employee[] = allEmployee.slice(offset, offset + rowsPerPage);
+  const currentEmployees:Company[] = allCompany.slice(offset, offset + rowsPerPage);
 
 
   //get all employee data
   const getData = async () => {
     try {
-        const response = await axios.get("http://127.0.0.1:5000/getUsers");
+        const response = await axios.get("http://127.0.0.1:5000/getCompany");
         console.log(response);
-        setAllEmployee(response.data);
+        setAllCompany(response.data);
         
     } catch (error) {
         console.log(error);
@@ -61,9 +60,9 @@ const Home = () => {
   };
 
   //delete employee
-  const deleteEmployee = async (_id:string) => {
+  const deleteCompany= async (_id:string) => {
     try {
-        const response = await axios.delete(`http://127.0.0.1:5000/deleteEmploy/${_id} `);
+        const response = await axios.delete(`http://127.0.0.1:5000/deleteCompany/${_id} `);
       
           // setAllEmployee(response.data);
           getData();
@@ -75,66 +74,36 @@ const Home = () => {
 
   };
 
-  //search employee
-  const onSearchEmployee =  async(query:string) => {
-    const response = await axios.get(`http://localhost:5000/search/${query}`);
-    setAllEmployee(response.data);
-  };
+    // Handle page change
+    const handlePageChange = (data:any) => {
+        setCurrentPage(data.selected); // `selected` gives the index of the clicked page (0-based)
+      };
 
-  const handleClearSearch = () => {
-    getData();
-  };
+      const getCompanies = async () => {
+        try {
+            const response = await axios.get("http://127.0.0.1:5000/getUsers");
+            setAllUsers(response.data);
+            
+        } catch (error) {
+            console.log(error);
+            
+        }
+    
+      };
 
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-
-      const formData = new FormData();
-      formData.append("file", file);
-        const response = await axios.post("http://127.0.0.1:5000/uploadBulk", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        getData();
-
-    }
-  };
-  // Handle page change
-  const handlePageChange = (data:any) => {
-    setCurrentPage(data.selected); // `selected` gives the index of the clicked page (0-based)
-  };
-
- 
-  
-
-  // //get all departments
-  //get all departments
-  const getDepartment = async () => {
-    try {
-        const response = await axios.get("http://127.0.0.1:5000/getCompany");
-        setAllDepartments(response.data);
-        
-    } catch (error) {
-        console.log(error);
-        
-    }
-
-  };
 
 
   useEffect(() => {
     getData();
-    getDepartment();
+    getCompanies();
   }, []);
 
   return (
     <div>
       <Navbar
         userInfo={null}
-        onSearchEmployee={onSearchEmployee}
-        handleClearSearch={handleClearSearch}
+        onSearchEmployee={() => {}}
+        handleClearSearch={() => {}}
       />
 
       <div className="relative mt-[100px] ml-[200px] overflow-x-auto shadow-md mr-[200px] sm:rounded-lg ">
@@ -142,19 +111,13 @@ const Home = () => {
           <thead className="text-xs text-gray-700 uppercase bg-gray-300 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Name
+                Id
               </th>
               <th scope="col" className="px-6 py-3">
-                Email
+                Company Name
               </th>
               <th scope="col" className="px-6 py-3">
-                Password
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Company
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Role
+                User Count
               </th>
               <th scope="col" className="px-6 py-3">
                 Action
@@ -169,22 +132,18 @@ const Home = () => {
                     scope="row"
                     className="px-6 py-4 font-medium text-black whitespace-nowrap "
                   >
-                    {item.fullName}
+                    {item.id}
                   </th>
                   <td
                     className="px-6 py-4 "
                   >
-                    {item.email}
-                  </td>
-                  <td className="px-6 py-4">
-                    {item.password}
+                    {item.name}
                   </td>
                   <td className="px-6 py-4">
                     {
-                        allDepartments.find((data:any) => data.name === item.company)?.name || "N/A"
+                       allUsers.filter((data: any) => data.company === item.name).length.toString()
                     }
                   </td>
-                  <td className="px-6 py-4">{item.role}</td>
                   <td className="px-6 py-4">
                     <button
                       className="font-medium text-blue-600 hover:underline"
@@ -200,7 +159,7 @@ const Home = () => {
                     </button>
                     <button
                       className="md:sm:font-medium md:sm:text-red-600 md:sm:hover:underline md:ml-4 sm:ml-0 max-sm:text-red-600"
-                      onClick={() => deleteEmployee(item._id)}
+                      onClick={() => deleteCompany(item._id)}
                     >
                       Delete
                     </button>
@@ -213,12 +172,12 @@ const Home = () => {
       </div>
               
                 {/* React Paginate Component */}
-                {allEmployee.length > rowsPerPage && (
+                {allCompany.length > rowsPerPage && (
         <div className="flex justify-center mt-4">
           <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
-            pageCount={Math.ceil(allEmployee.length / 4)}
+            pageCount={Math.ceil(allCompany.length / 4)}
             onPageChange={handlePageChange}
             containerClassName={"flex space-x-4 items-center"}
             pageClassName={"px-4 py-2 cursor-pointer border border-gray-300 rounded"}
@@ -237,23 +196,6 @@ const Home = () => {
         >
           Add
       </button>
-        <div>
-        <label
-          htmlFor="uploadFile1"
-          className="text-white bg-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-5 mr-5 float-right"
-        >
-         {/* <FaCloudUploadAlt /> */}
-          Upload
-          <input
-            type="file"
-            id="uploadFile1"
-            className="hidden"
-            accept=".csv, .xlsx"
-            onChange={handleFileChange}
-            disabled={uploading}
-          />
-        </label>
-    </div>
       </div>
       <Modal
         isOpen={addEditModel.isShown}
@@ -270,8 +212,7 @@ const Home = () => {
         <AddEditEmployee
           type={addEditModel.type}
           getData={getData}
-          allDepartments={allDepartments}
-          employeeData={addEditModel.data}
+          data={addEditModel.data}
           onClose={() =>
             setAddEditModel({ isShown: false, data: null ,type: "add",})
           }
@@ -281,4 +222,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Company;
