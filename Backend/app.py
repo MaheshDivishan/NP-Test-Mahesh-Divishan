@@ -128,11 +128,29 @@ def get_user():
 @app.route('/deleteEmploy/<string:user_id>', methods=['DELETE'])
 def delete_employee(user_id):
     try:
-        # Convert the user_id to ObjectId
+                # Convert user_id to ObjectId and retrieve the user's company name
+        user = users.find_one({'_id': ObjectId(user_id)})
+        if not user:
+            return jsonify({"error": "Employee not found"}), 404
+
+        company_name = user.get('company')
+
+        # Delete the user
         result = users.delete_one({'_id': ObjectId(user_id)})
 
         if result.deleted_count > 0:
+            # Count remaining users in the company
+            user_count = users.count_documents({'company': company_name})
+
+            # If no users remain, delete the company
+            if user_count == 0:
+                company.delete_one({'name': company_name})
+                return jsonify({
+                    "message": "Employee deleted successfully. Company also removed as no users are associated with it."
+                }), 200
+
             return jsonify({"message": "Employee deleted successfully"}), 200
+
         else:
             return jsonify({"error": "Employee not found"}), 404
     except Exception as e:
@@ -179,11 +197,16 @@ def update_employee():
 def upload_bulk():
     try:
         file = request.files['file']
-        csvFile = pd.read_csv(file)
+        if file.filename.endswith('.csv'):
+            data_file = pd.read_csv(file)
+        elif file.filename.endswith('.xlsx'):
+            data_file = pd.read_excel(file)
         # Insert documents into the MongoDB collection
-        documents = csvFile.to_dict(orient='records')  # Convert rows to list of dictionaries
+        documents = data_file.to_dict(orient='records')  # Convert rows to list of dictionaries
         for doc in documents:
           is_user = users.find_one({"email": doc.get('email')})
+        #   name = users.find_one({id:doc.get('company')}).get('name')
+        #   doc.get('company') = name
           if is_user:
               print('Duplicate records')
           else:
@@ -228,7 +251,6 @@ def add_company():
 @app.route('/getCompany', methods=['GET'])
 def get_company():
     try:
-        # Retrieve all users and convert the cursor to a list
         company_data = list(company.find())  
         for user in company_data:
             user['_id'] = str(user['_id']) 

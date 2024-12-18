@@ -34,18 +34,18 @@ const Navbar = ({userInfo,onSearchEmployee,handleClearSearch}:NavbarProps) => {
   }
 
   return (
-    <div className="flex items-center justify-between px-6 py-2 bg-gray-200 drop-shadow">
-      <div className="flex items-center space-x-4">
-        <h2 className="py-2 text-xl font-medium text-black">
-          User Management System
-        </h2>
-        <Link to="/dashboard" className="text-gray-700 hover:underline px-[680px] pr-0">
-          User
-        </Link>
-        <Link to="/company" className="text-gray-700 px-9 hover:underline">
-          Company
-        </Link>
-      </div>
+<div className="flex items-center justify-between px-6 py-2 bg-gray-200 drop-shadow">
+  <div className="flex items-center space-x-4">
+    {/* Header Title */}
+    <h2 className="py-2 text-xl font-medium text-black">User Management System</h2>
+
+    {/* Navigation Links */}
+    <nav className="flex items-center">
+      <Link to="/dashboard" className="px-[550px] pr-10 text-gray-700 hover:underline">User</Link>
+      <Link to="/company" className="px-4 pr-10 text-gray-700 hover:underline">Company</Link>
+      <Link to="/login" className="px-4 text-gray-700 hover:underline">Log Out</Link>
+    </nav>
+  </div>
       <SearchBar 
       value={searchQuery}
       onChange={e => {

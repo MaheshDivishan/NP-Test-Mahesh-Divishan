@@ -4,6 +4,7 @@ import AddEditEmployee from "./AddEditEmployee";
 import Modal from "react-modal";
 import Navbar from "../../components/navbar/navbar";
 import ReactPaginate from "react-paginate";
+import bcrypt from 'bcryptjs';
 
 
 interface Employee {
@@ -177,7 +178,7 @@ const Home = () => {
                     {item.email}
                   </td>
                   <td className="px-6 py-4">
-                    {item.password}
+                  {bcrypt.hashSync(item.password, 10).slice(0, 20)}
                   </td>
                   <td className="px-6 py-4">
                     {
