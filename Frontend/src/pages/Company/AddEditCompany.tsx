@@ -25,7 +25,7 @@ const AddEditCompany = ({data,getData,type,onClose}:AddEditCompanyProps) => {
   const [id, setId] = useState<string>(data?.id || "");
   const [error, setError] = useState<string | null>(null);
 
-  //Add Employee
+  //Add Company
   const addComapny = async () => {
     try {
         const response = await axios.post(
@@ -45,7 +45,9 @@ const AddEditCompany = ({data,getData,type,onClose}:AddEditCompanyProps) => {
     onClose();
     
   };
-  // Update Employee
+
+  
+  // Update Company
   const editCompany = async () => {
     try {
         const response = await axios.put(

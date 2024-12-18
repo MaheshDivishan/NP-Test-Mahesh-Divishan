@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { MdClose } from "react-icons/md";
 
-interface EmployeeData {
+interface UserData {
   fullName: string;
   email: string;
   password: string;
@@ -11,26 +11,26 @@ interface EmployeeData {
   _id:string;
 }
 
-interface AddEditEmployeeProps {
-  employeeData?: EmployeeData;
+interface AddEditUsersProps {
+  userData?: UserData;
   getData: any;
   type: "add" | "edit";
   onClose: any;
-  allDepartments: string[];
+  allCompany: string[];
 }
 
-const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddEditEmployeeProps) => {
+const AddEditUsers = ({userData,getData,type,onClose,allCompany}:AddEditUsersProps) => {
 
-  const [_id, setId] = useState<string>(employeeData?._id || "");
-  const [name, setName] = useState<string>(employeeData?.fullName || "");
-  const [email, setEmail] = useState<string>(employeeData?.email || "");
-  const [company, setCompany] = useState<string>(employeeData?.company || "");
-  const [role, setRole] = useState<string>(employeeData?.role || "");
-  const [password, setPassword] = useState<string>(employeeData?.password || "");
+  const [_id, setId] = useState<string>(userData?._id || "");
+  const [name, setName] = useState<string>(userData?.fullName || "");
+  const [email, setEmail] = useState<string>(userData?.email || "");
+  const [company, setCompany] = useState<string>(userData?.company || "");
+  const [role, setRole] = useState<string>(userData?.role || "");
+  const [password, setPassword] = useState<string>(userData?.password || "");
   const [error, setError] = useState<string | null>(null);
 
-  //Add Employee
-  const addEmployee = async () => {
+  //Add User
+  const addUser = async () => {
     try {
         const response = await axios.post(
             "http://127.0.0.1:5000/addUser",
@@ -51,8 +51,8 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
     onClose();
     
   };
-  // Update Employee
-  const editEmployee = async () => {
+  // Update User
+  const editUser = async () => {
     try {
         const response = await axios.put(
             "http://127.0.0.1:5000/updateEmploy",
@@ -102,9 +102,9 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
     setError("");
 
     if (type === "edit") {
-      editEmployee();
+      editUser();
     } else {
-      addEmployee();
+      addUser();
     }
   };
 
@@ -118,15 +118,6 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
           <MdClose className="text-xl text-black-500 " />
         </button>
 
-        {/* {type === "add" ? (        <div className="flex flex-col gap-2">
-          <label className="flex text-black text-m">Name</label>
-          <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
-        </div>) : (<div></div>)} */}
 
         <div className="flex flex-col gap-2 mt-4">
           <label className="flex text-black text-m">Name</label>
@@ -166,7 +157,7 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           >
             {type === "add" ? (<option value="">Select Company</option>) : ("")}
-            {allDepartments.map((item:any) => (
+            {allCompany.map((item:any) => (
               <option value={item.name}>{item.name}</option>
             ))}
           </select>
@@ -199,4 +190,4 @@ const AddEditEmployee = ({employeeData,getData,type,onClose,allDepartments}:AddE
   );
 };
 
-export default AddEditEmployee;
+export default AddEditUsers;

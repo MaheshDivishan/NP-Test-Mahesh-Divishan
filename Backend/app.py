@@ -1,6 +1,5 @@
 import os
 import re
-from turtle import pd
 from flask import Flask,request
 from flask.json import jsonify
 from pymongo import MongoClient 
@@ -9,11 +8,16 @@ from bson import json_util
 from bson.objectid import ObjectId
 import csv
 import pandas as pd
+from dotenv import load_dotenv
+
+
+load_dotenv()
+mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 
 app = Flask(__name__)
 CORS(app) 
 # Set up MongoDB connection 
-client = MongoClient('mongodb://localhost:27017/') 
+client = MongoClient(mongo_uri) 
 db = client.user_management
 users = db.users
 company = db.company
@@ -37,16 +41,16 @@ def create_account():
         company = data.get('company')
 
         if not full_name:
-            return jsonify({"error": True, "message": "Full Name is required"}), 400
+            return jsonify({"error": True, "message": "Full Name is required"})
         if not email:
-            return jsonify({"error": True, "message": "Email is required"}), 400
+            return jsonify({"error": True, "message": "Email is required"})
         if not password:
-            return jsonify({"error": True, "message": "Password is required"}), 400
+            return jsonify({"error": True, "message": "Password is required"})
 
-        # Check if the user already exists
+        # Check user already exists
         is_user = users.find_one({"email": email})
         if is_user:
-            return jsonify({"error": True, "message": "User already exists"}), 400
+            return jsonify({"error": True, "message": "User already exists"})
 
 
         # Create a new user
@@ -63,9 +67,9 @@ def create_account():
             "error": False,
             "user": {"fullName": full_name, "email": email},
             "message": "Registration Successful"
-        }), 200
+        })
     except Exception as e:
-        return jsonify({"error": True, "message": "Server Error: " + str(e)}), 500
+        return jsonify({"error": True, "message": "Server Error: " + str(e)})
 
 
 
@@ -77,16 +81,16 @@ def login():
     password = data.get('password')
 
     if not email:
-        return jsonify({"error": True, "message": "Email is required"}), 400
+        return jsonify({"error": True, "message": "Email is required"})
 
     if not password:
-        return jsonify({"error": True, "message": "Password is required"}), 400
+        return jsonify({"error": True, "message": "Password is required"})
 
     # Find user by email
     user_info = users.find_one({"email": email})
 
     if not user_info:
-        return jsonify({"error": True, "message": "User not found"}), 404
+        return jsonify({"error": True, "message": "User not found"})
     
     if user_info['password'] == password and user_info['email'] == email:
         return jsonify({
@@ -95,7 +99,7 @@ def login():
             "message": "Login Successful",
         })
     else:
-        return jsonify({"error": True, "message": "Invalid Credentials"}), 400
+        return jsonify({"error": True, "message": "Invalid Credentials"})
     
 
 #Create Account
@@ -103,35 +107,34 @@ def login():
 def add_user():
     try:
         data = request.json
-        # Check if the user already exists
+        # Check user already exists
         is_user = users.find_one({"email": data.get('email')})
         if is_user:
-            return jsonify({"error": True, "message": "User already exists"}), 400
+            return jsonify({"error": True, "message": "User already exists"})
         
         else:
             users.insert_one(data)
     except Exception as e:
-        return jsonify({"error": True, "message": "Server Error: " + str(e)}), 500
+        return jsonify({"error": True, "message": "Server Error: " + str(e)})
     
 #Login
 @app.route('/getUsers', methods=['GET'])
 def get_user():
     try:
-        # Retrieve all users and convert the cursor to a list
         users_data = list(users.find())  
         for user in users_data:
             user['_id'] = str(user['_id']) 
-        return jsonify(users_data), 200
+        return jsonify(users_data)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)})
     
 @app.route('/deleteEmploy/<string:user_id>', methods=['DELETE'])
 def delete_employee(user_id):
     try:
-                # Convert user_id to ObjectId and retrieve the user's company name
+        # Convert user_id to ObjectId 
         user = users.find_one({'_id': ObjectId(user_id)})
         if not user:
-            return jsonify({"error": "Employee not found"}), 404
+            return jsonify({"error": "Employee not found"})
 
         company_name = user.get('company')
 
@@ -149,30 +152,23 @@ def delete_employee(user_id):
                     "message": "Employee deleted successfully. Company also removed as no users are associated with it."
                 }), 200
 
-            return jsonify({"message": "Employee deleted successfully"}), 200
+            return jsonify({"message": "Employee deleted successfully"})
 
         else:
-            return jsonify({"error": "Employee not found"}), 404
+            return jsonify({"error": "Employee not found"})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)})
     
 @app.route('/updateEmploy', methods=['PUT'])
 def update_employee():
     try:
-        # Parse the request JSON
         data = request.json
-        # data = data.get('_id')
-        print(data)
-
-        # Extract `_id` and other fields
         user_id = data.get('_id')
         if not user_id:
-            return jsonify({"error": "Missing `_id` in request"}), 400
+            return jsonify({"error": "Missing `_id` in request"})
 
         # Convert `_id` to ObjectId
         user_id = ObjectId(user_id)
-
-        # Fields to update
         update_fields = {
             "fullName": data.get("fullName"),
             "email": data.get("email"),
@@ -181,17 +177,15 @@ def update_employee():
             "role": data.get("role"),
         }
 
-
-        # Update the employee in the database
         result = users.update_one({"_id": user_id}, {"$set": update_fields})
 
         if result.matched_count > 0:
-            return jsonify({"message": "Employee updated successfully"}), 200
+            return jsonify({"message": "Employee updated successfully"})
         else:
-            return jsonify({"error": "Employee not found"}), 404
+            return jsonify({"error": "Employee not found"})
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)})
     
 @app.route('/uploadBulk', methods=['POST'])
 def upload_bulk():
@@ -201,20 +195,19 @@ def upload_bulk():
             data_file = pd.read_csv(file)
         elif file.filename.endswith('.xlsx'):
             data_file = pd.read_excel(file)
-        # Insert documents into the MongoDB collection
+    
         documents = data_file.to_dict(orient='records')  # Convert rows to list of dictionaries
         for doc in documents:
           is_user = users.find_one({"email": doc.get('email')})
-        #   name = users.find_one({id:doc.get('company')}).get('name')
-        #   doc.get('company') = name
+
           if is_user:
               print('Duplicate records')
           else:
               users.insert_one(doc)
 
-        return jsonify({"message": "Bulk upload successful", "insertedCount": len(documents)}), 200
+        return jsonify({"message": "Bulk upload successful", "insertedCount": len(documents)})
     except Exception as e:
-        return jsonify({"error": True, "message": "Server Error: " + str(e)}), 500
+        return jsonify({"error": True, "message": "Server Error: " + str(e)})
     
 @app.route('/search//<string:query>', methods=['GET'])
 def search_users(query):
@@ -240,12 +233,12 @@ def add_company():
         # Check if the user already exists
         is_user = company.find_one({"name": data.get('name')})
         if is_user:
-            return jsonify({"error": True, "message": "User already exists"}), 400
+            return jsonify({"error": True, "message": "User already exists"})
         
         else:
             company.insert_one(data)
     except Exception as e:
-        return jsonify({"error": True, "message": "Server Error: " + str(e)}), 500
+        return jsonify({"error": True, "message": "Server Error: " + str(e)})
     
 #Get All Companies
 @app.route('/getCompany', methods=['GET'])
@@ -254,9 +247,9 @@ def get_company():
         company_data = list(company.find())  
         for user in company_data:
             user['_id'] = str(user['_id']) 
-        return jsonify(company_data), 200
+        return jsonify(company_data)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)})
     
 #Delete Company
 @app.route('/deleteCompany/<string:_id>', methods=['DELETE'])
@@ -266,9 +259,9 @@ def delete_company(_id):
         result = company.delete_one({'_id': ObjectId(_id)})
 
         if result.deleted_count > 0:
-            return jsonify({"message": "Employee deleted successfully"}), 200
+            return jsonify({"message": "Employee deleted successfully"})
         else:
-            return jsonify({"error": "Employee not found"}), 404
+            return jsonify({"error": "Employee not found"})
     except Exception as e:
         return
     
@@ -282,7 +275,6 @@ def update_company():
         # Convert `_id` to ObjectId
         user_id = ObjectId(user_id)
 
-        # Fields to update
         update_fields = {
             "name": data.get("name"),
             "id": data.get("id"),
@@ -292,17 +284,13 @@ def update_company():
         result = company.update_one({"_id": user_id}, {"$set": update_fields})
 
         if result.matched_count > 0:
-            return jsonify({"message": "Employee updated successfully"}), 200
+            return jsonify({"message": "Employee updated successfully"})
         else:
-            return jsonify({"error": "Employee not found"}), 404
+            return jsonify({"error": "Employee not found"})
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)})
 
     
-
-
-
-# main driver function
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5000)

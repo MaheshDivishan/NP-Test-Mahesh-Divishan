@@ -1,21 +1,19 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import AddEditEmployee from "./AddEditEmployee";
+import AddEditEmployee from "./AddEditUsers";
 import Modal from "react-modal";
 import Navbar from "../../components/navbar/navbar";
 import ReactPaginate from "react-paginate";
-import bcrypt from 'bcryptjs';
-
+import bcrypt from "bcryptjs";
 
 interface Employee {
   fullName: string;
   email: string;
   password: string;
   company: string;
-  role:string;
-  _id:string;
+  role: string;
+  _id: string;
 }
-
 
 interface AddEditModel {
   type: "add" | "edit";
@@ -37,47 +35,43 @@ const Home = () => {
     data: null,
     isShown: false,
   });
-  const [allDepartments, setAllDepartments] = useState<any>([]);
-  const [uploading, setUploading] = useState<boolean>(false);;
+  const [allCompany, setAllCompany] = useState<any>([]);
+  const [uploading, setUploading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
 
-  const rowsPerPage:number = 7; 
-  const offset:number = currentPage * rowsPerPage;
-  const currentEmployees:Employee[] = allEmployee.slice(offset, offset + rowsPerPage);
+  const rowsPerPage: number = 7;
+  const offset: number = currentPage * rowsPerPage;
+  const currentEmployees: Employee[] = allEmployee.slice(
+    offset,
+    offset + rowsPerPage
+  );
 
-
-  //get all employee data
+  //get all user data
   const getData = async () => {
     try {
-        const response = await axios.get("http://127.0.0.1:5000/getUsers");
-        console.log(response);
-        setAllEmployee(response.data);
-        
+      const response = await axios.get("http://127.0.0.1:5000/getUsers");
+      console.log(response);
+      setAllEmployee(response.data);
     } catch (error) {
-        console.log(error);
-        
+      console.log(error);
     }
-
-    
   };
 
-  //delete employee
-  const deleteEmployee = async (_id:string) => {
+  //delete user
+  const deleteEmployee = async (_id: string) => {
     try {
-        const response = await axios.delete(`http://127.0.0.1:5000/deleteEmploy/${_id} `);
-      
-          // setAllEmployee(response.data);
-          getData();
-        
-    } catch (error) {
-        console.log(error);
-        
-    }
+      const response = await axios.delete(
+        `http://127.0.0.1:5000/deleteEmploy/${_id} `
+      );
 
+      getData();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  //search employee
-  const onSearchEmployee =  async(query:string) => {
+  //search user
+  const onSearchEmployee = async (query: string) => {
     const response = await axios.get(`http://localhost:5000/search/${query}`);
     setAllEmployee(response.data);
   };
@@ -86,54 +80,46 @@ const Home = () => {
     getData();
   };
 
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
 
       const formData = new FormData();
       formData.append("file", file);
-        const response = await axios.post("http://127.0.0.1:5000/uploadBulk", formData, {
+      const response = await axios.post(
+        "http://127.0.0.1:5000/uploadBulk",
+        formData,
+        {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        });
-        getData();
-
+        }
+      );
+      getData();
     }
   };
   // Handle page change
-  const handlePageChange = (data:any) => {
-    setCurrentPage(data.selected); // `selected` gives the index of the clicked page (0-based)
+  const handlePageChange = (data: any) => {
+    setCurrentPage(data.selected);
   };
 
- 
-  
-
-  // //get all departments
-  //get all departments
-  const getDepartment = async () => {
+  const getCompany = async () => {
     try {
-        const response = await axios.get("http://127.0.0.1:5000/getCompany");
-        setAllDepartments(response.data);
-        
+      const response = await axios.get("http://127.0.0.1:5000/getCompany");
+      setAllCompany(response.data);
     } catch (error) {
-        console.log(error);
-        
+      console.log(error);
     }
-
   };
-
 
   useEffect(() => {
     getData();
-    getDepartment();
+    getCompany();
   }, []);
 
   return (
     <div>
       <Navbar
-        userInfo={null}
         onSearchEmployee={onSearchEmployee}
         handleClearSearch={handleClearSearch}
       />
@@ -172,18 +158,13 @@ const Home = () => {
                   >
                     {item.fullName}
                   </th>
-                  <td
-                    className="px-6 py-4 "
-                  >
-                    {item.email}
+                  <td className="px-6 py-4 ">{item.email}</td>
+                  <td className="px-6 py-4">
+                    {bcrypt.hashSync(item.password, 10).slice(0, 20)}
                   </td>
                   <td className="px-6 py-4">
-                  {bcrypt.hashSync(item.password, 10).slice(0, 20)}
-                  </td>
-                  <td className="px-6 py-4">
-                    {
-                        allDepartments.find((data:any) => data.name === item.company)?.name || "N/A"
-                    }
+                    {allCompany.find((data: any) => data.name === item.company)
+                      ?.name || "N/A"}
                   </td>
                   <td className="px-6 py-4">{item.role}</td>
                   <td className="px-6 py-4">
@@ -210,11 +191,9 @@ const Home = () => {
               ))}
           </tbody>
         </table>
-
       </div>
-              
-                {/* React Paginate Component */}
-                {allEmployee.length > rowsPerPage && (
+
+      {allEmployee.length > rowsPerPage && (
         <div className="flex justify-center mt-4">
           <ReactPaginate
             previousLabel={"Previous"}
@@ -222,13 +201,15 @@ const Home = () => {
             pageCount={Math.ceil(allEmployee.length / 4)}
             onPageChange={handlePageChange}
             containerClassName={"flex space-x-4 items-center"}
-            pageClassName={"px-4 py-2 cursor-pointer border border-gray-300 rounded"}
+            pageClassName={
+              "px-4 py-2 cursor-pointer border border-gray-300 rounded"
+            }
             activeClassName={"bg-gray-700 text-white"}
             disabledClassName={"text-gray-400 cursor-not-allowed"}
           />
         </div>
       )}
-        
+
       <div className="relative mt-1  overflow-x-auto  mr-[200px] sm:rounded-lg">
         <button
           className="text-white bg-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-5 mr-5 float-right"
@@ -237,24 +218,23 @@ const Home = () => {
           }
         >
           Add
-      </button>
+        </button>
         <div>
-        <label
-          htmlFor="uploadFile1"
-          className="text-white bg-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-5 mr-5 float-right"
-        >
-         {/* <FaCloudUploadAlt /> */}
-          Upload
-          <input
-            type="file"
-            id="uploadFile1"
-            className="hidden"
-            accept=".csv, .xlsx"
-            onChange={handleFileChange}
-            disabled={uploading}
-          />
-        </label>
-    </div>
+          <label
+            htmlFor="uploadFile1"
+            className="text-white bg-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-5 mr-5 float-right"
+          >
+            Upload
+            <input
+              type="file"
+              id="uploadFile1"
+              className="hidden"
+              accept=".csv, .xlsx"
+              onChange={handleFileChange}
+              disabled={uploading}
+            />
+          </label>
+        </div>
       </div>
       <Modal
         isOpen={addEditModel.isShown}
@@ -271,10 +251,10 @@ const Home = () => {
         <AddEditEmployee
           type={addEditModel.type}
           getData={getData}
-          allDepartments={allDepartments}
-          employeeData={addEditModel.data}
+          allCompany={allCompany}
+          userData={addEditModel.data}
           onClose={() =>
-            setAddEditModel({ isShown: false, data: null ,type: "add",})
+            setAddEditModel({ isShown: false, data: null, type: "add" })
           }
         />
       </Modal>

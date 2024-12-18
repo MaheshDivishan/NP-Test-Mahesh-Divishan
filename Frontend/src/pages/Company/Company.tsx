@@ -5,14 +5,12 @@ import Modal from "react-modal";
 import Navbar from "../../components/navbar/navbar";
 import ReactPaginate from "react-paginate";
 
-
 interface Company {
   name: string;
   id: string;
   count: string;
-  _id:string;
+  _id: string;
 }
-
 
 interface AddEditModel {
   type: "add" | "edit";
@@ -21,13 +19,13 @@ interface AddEditModel {
 }
 
 interface Employee {
-    fullName: string;
-    email: string;
-    password: string;
-    company: string;
-    role:string;
-    _id:string;
-  }
+  fullName: string;
+  email: string;
+  password: string;
+  company: string;
+  role: string;
+  _id: string;
+}
 
 const Company = () => {
   const [allCompany, setAllCompany] = useState<Company[]>([]);
@@ -39,59 +37,50 @@ const Company = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [allUsers, setAllUsers] = useState<Employee[]>([]);
 
-  const rowsPerPage:number = 7; 
-  const offset:number = currentPage * rowsPerPage;
-  const currentEmployees:Company[] = allCompany.slice(offset, offset + rowsPerPage);
+  const rowsPerPage: number = 7;
+  const offset: number = currentPage * rowsPerPage;
+  const currentEmployees: Company[] = allCompany.slice(
+    offset,
+    offset + rowsPerPage
+  );
 
-
-  //get all employee data
+  //get all company data
   const getData = async () => {
     try {
-        const response = await axios.get("http://127.0.0.1:5000/getCompany");
-        console.log(response);
-        setAllCompany(response.data);
-        
+      const response = await axios.get("http://127.0.0.1:5000/getCompany");
+      console.log(response);
+      setAllCompany(response.data);
     } catch (error) {
-        console.log(error);
-        
+      console.log(error);
     }
-
-    
   };
 
-  //delete employee
-  const deleteCompany= async (_id:string) => {
+  //delete company
+  const deleteCompany = async (_id: string) => {
     try {
-        const response = await axios.delete(`http://127.0.0.1:5000/deleteCompany/${_id} `);
-      
-          // setAllEmployee(response.data);
-          getData();
-        
-    } catch (error) {
-        console.log(error);
-        
-    }
+      const response = await axios.delete(
+        `http://127.0.0.1:5000/deleteCompany/${_id} `
+      );
 
+      getData();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-    // Handle page change
-    const handlePageChange = (data:any) => {
-        setCurrentPage(data.selected); // `selected` gives the index of the clicked page (0-based)
-      };
+  // Handle page change
+  const handlePageChange = (data: any) => {
+    setCurrentPage(data.selected); // `selected` gives the index of the clicked page (0-based)
+  };
 
-      const getCompanies = async () => {
-        try {
-            const response = await axios.get("http://127.0.0.1:5000/getUsers");
-            setAllUsers(response.data);
-            
-        } catch (error) {
-            console.log(error);
-            
-        }
-    
-      };
-
-
+  const getCompanies = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:5000/getUsers");
+      setAllUsers(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getData();
@@ -100,11 +89,7 @@ const Company = () => {
 
   return (
     <div>
-      <Navbar
-        userInfo={null}
-        onSearchEmployee={() => {}}
-        handleClearSearch={() => {}}
-      />
+      <Navbar onSearchEmployee={() => {}} handleClearSearch={() => {}} />
 
       <div className="relative mt-[100px] ml-[200px] overflow-x-auto shadow-md mr-[200px] sm:rounded-lg ">
         <table className="w-full text-sm text-left text-gray-500 border border-collapse rtl:text-right dark:text-gray-400 border-slate-4s00">
@@ -134,15 +119,11 @@ const Company = () => {
                   >
                     {item.id}
                   </th>
-                  <td
-                    className="px-6 py-4 "
-                  >
-                    {item.name}
-                  </td>
+                  <td className="px-6 py-4 ">{item.name}</td>
                   <td className="px-6 py-4">
-                    {
-                       allUsers.filter((data: any) => data.company === item.name).length.toString()
-                    }
+                    {allUsers
+                      .filter((data: any) => data.company === item.name)
+                      .length.toString()}
                   </td>
                   <td className="px-6 py-4">
                     <button
@@ -168,11 +149,9 @@ const Company = () => {
               ))}
           </tbody>
         </table>
-
       </div>
-              
-                {/* React Paginate Component */}
-                {allCompany.length > rowsPerPage && (
+
+      {allCompany.length > rowsPerPage && (
         <div className="flex justify-center mt-4">
           <ReactPaginate
             previousLabel={"Previous"}
@@ -180,13 +159,15 @@ const Company = () => {
             pageCount={Math.ceil(allCompany.length / 4)}
             onPageChange={handlePageChange}
             containerClassName={"flex space-x-4 items-center"}
-            pageClassName={"px-4 py-2 cursor-pointer border border-gray-300 rounded"}
+            pageClassName={
+              "px-4 py-2 cursor-pointer border border-gray-300 rounded"
+            }
             activeClassName={"bg-gray-700 text-white"}
             disabledClassName={"text-gray-400 cursor-not-allowed"}
           />
         </div>
       )}
-        
+
       <div className="relative mt-1  overflow-x-auto  mr-[200px] sm:rounded-lg">
         <button
           className="text-white bg-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-5 mr-5 float-right"
@@ -195,7 +176,7 @@ const Company = () => {
           }
         >
           Add
-      </button>
+        </button>
       </div>
       <Modal
         isOpen={addEditModel.isShown}
@@ -214,7 +195,7 @@ const Company = () => {
           getData={getData}
           data={addEditModel.data}
           onClose={() =>
-            setAddEditModel({ isShown: false, data: null ,type: "add",})
+            setAddEditModel({ isShown: false, data: null, type: "add" })
           }
         />
       </Modal>

@@ -48,11 +48,7 @@ const Login = () => {
 
   return (
     <>
-    {/* <Navbar userInfo={undefined} onSearchNote={function (): void {
-              throw new Error('Function not implemented.');
-          } } handleClearSearch={function (): void {
-              throw new Error('Function not implemented.');
-          } }/> */}
+    {/* <Navbar onSearchEmployee={() => {}} handleClearSearch={() => {}}/> */}
     
     <div className="flex items-center justify-center mt-28" >
         <div className="py-10 bg-white border rounded w-96 px-7">

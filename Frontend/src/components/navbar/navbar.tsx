@@ -1,23 +1,20 @@
 import { useState } from 'react';
-import ProfileInfo from '../Cards/ProfileInfo';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from '../SearchBar/SearchBar';
 
 
 
 interface NavbarProps {
-  userInfo: any;
   onSearchEmployee: (query: string) => void;
   handleClearSearch: () => void;
 }
 
-const Navbar = ({userInfo,onSearchEmployee,handleClearSearch}:NavbarProps) => {
+const Navbar = ({onSearchEmployee,handleClearSearch}:NavbarProps) => {
   const [searchQuery,setSearchQuery] = useState("");
   const navigate = useNavigate(); // Correctly calling useNavigate as a function
 
   const onLogout = () => {
     localStorage.clear();
-    userInfo = null;
     navigate("/login"); // Correct syntax for navigation
   };
 
@@ -53,7 +50,6 @@ const Navbar = ({userInfo,onSearchEmployee,handleClearSearch}:NavbarProps) => {
       }}
       handleSearch={handleSearch}
       onClearSearch={onClearSearch}/>
-      {userInfo && <ProfileInfo userInfo={userInfo} onLogout={onLogout} />} {/* Render ProfileInfo only if userInfo exists */}
     </div>
   );
 };
