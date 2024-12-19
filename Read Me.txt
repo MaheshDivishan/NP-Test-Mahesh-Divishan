@@ -1,0 +1,40 @@
+Tech Stack :
+
+* Frontend : React.js (Typescript)
+* Backend : Python (Flask)
+* Database : MongoDB
+
+Set Up Using Docker:
+
+* Install MongoDB and MongoDB Compass.
+
+* Install Docker
+
+* Go to the project file and run "docker-compose up"
+
+* Then the project runs on http://localhost:5173/
+
+Set Up Using Without Docker:
+
+* Install Node.js and Python.
+
+* Go to the frontend and enter the terminal "npm install" and "npm run dev"
+
+* Go to the backend folder and run the terminal: "pip install -r requirements.txt"
+
+* Then enter "flask run" 
+
+How to Use Application:
+
+* First Create Account ( example: email - testuser@gmail.com , password - user123)
+
+* Then go to the User page there you can create, edit, or delete users.
+
+* Before assigning a company, you should add the company on the company page.
+
+* Then go to the user page and assign users to the company using edit button.
+
+* When uploading an Excel file the company names should include the company database. else the company name will not display in the user    table.
+
+
+

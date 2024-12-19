@@ -89,10 +89,10 @@ const AddEditUsers = ({userData,getData,type,onClose,allCompany}:AddEditUsersPro
       setError("Please Enter the Salary");
       return;
     }
-    if (!company) {  
-      setError("Please Enter the Department");
-      return;
-    }
+    // if (!company) {  
+    //   setError("Please Enter the Department");
+    //   return;
+    // }
 
     if (!role) {
       setError("Please enter the Date of Birth");
