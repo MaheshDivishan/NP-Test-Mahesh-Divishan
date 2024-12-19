@@ -5,6 +5,8 @@ import Modal from "react-modal";
 import Navbar from "../../components/navbar/navbar";
 import ReactPaginate from "react-paginate";
 import bcrypt from "bcryptjs";
+import axiosInstance from "../../utils/axiosInstance";
+
 
 interface Employee {
   fullName: string;
@@ -49,7 +51,7 @@ const Home = () => {
   //get all user data
   const getData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:5000/getUsers");
+      const response = await axiosInstance.get("/getUsers");
       console.log(response);
       setAllEmployee(response.data);
     } catch (error) {
@@ -57,11 +59,26 @@ const Home = () => {
     }
   };
 
+  interface HashedPasswordCellProps {
+    password: string;
+  }
+  
+  const HashedPasswordCell: React.FC<HashedPasswordCellProps> = ({ password }) => {
+    const [hashedPassword, setHashedPassword] = useState<string>('');
+  
+    useEffect(() => {
+      const hash = bcrypt.hashSync(password, 10).slice(0, 20);
+      setHashedPassword(hash);
+    }, [password]); // Recompute only when the password changes
+  
+    return <td className="px-6 py-4">{hashedPassword}</td>;
+  };
+
   //delete user
   const deleteEmployee = async (_id: string) => {
     try {
-      const response = await axios.delete(
-        `http://127.0.0.1:5000/deleteEmploy/${_id} `
+      const response = await axiosInstance.delete(
+        `/deleteEmploy/${_id} `
       );
 
       getData();
@@ -72,7 +89,7 @@ const Home = () => {
 
   //search user
   const onSearchEmployee = async (query: string) => {
-    const response = await axios.get(`http://localhost:5000/search/${query}`);
+    const response = await axiosInstance.get(`/search/${query}`);
     setAllEmployee(response.data);
   };
 
@@ -80,14 +97,15 @@ const Home = () => {
     getData();
   };
 
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
 
       const formData = new FormData();
       formData.append("file", file);
-      const response = await axios.post(
-        "http://127.0.0.1:5000/uploadBulk",
+      const response = await axiosInstance.post(
+        "/uploadBulk",
         formData,
         {
           headers: {
@@ -134,9 +152,9 @@ const Home = () => {
               <th scope="col" className="px-6 py-3">
                 Email
               </th>
-              <th scope="col" className="px-6 py-3">
+              {/* <th scope="col" className="px-6 py-3">
                 Password
-              </th>
+              </th> */}
               <th scope="col" className="px-6 py-3">
                 Company
               </th>
@@ -159,9 +177,9 @@ const Home = () => {
                     {item.fullName}
                   </th>
                   <td className="px-6 py-4 ">{item.email}</td>
-                  <td className="px-6 py-4">
+                  {/* <td className="px-6 py-4">
                     {bcrypt.hashSync(item.password, 10).slice(0, 20)}
-                  </td>
+                  </td> */}
                   <td className="px-6 py-4">
                     {allCompany.find((data: any) => data.name === item.company)
                       ?.name || "N/A"}

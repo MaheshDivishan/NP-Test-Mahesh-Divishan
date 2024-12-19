@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import PasswordInput from '../../components/input/PasswordInput';
 import axios from 'axios';
 import { validateEmail } from '../../utils/helper';
+import axiosInstance from '../../utils/axiosInstance';
 
 
 
@@ -30,14 +31,18 @@ const Login = () => {
 
         // Login API Call
         try{
-            const response = await axios.post("http://127.0.0.1:5000/login",{
+            const response = await axiosInstance.post("/login",{
                 email:email,
                 password:password,
             });
             //Handle successful login success
-            if(response.data){
-                console.log(response.data);
-                navigate("/dashboard");
+            if(response.data && response.data.error){
+                setError(response.data.message);
+                return;
+            }
+            if(response.data ){
+                localStorage.setItem("token",response.data.accessToken);
+                navigate("/dashboard")
             }
         }catch(error){
             setError("Login failed. Please check your credentials and try again.");

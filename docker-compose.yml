@@ -13,9 +13,11 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/
+      MONGO_URI: "mongodb://mongo:27017/"
+      JWT_SECRET_KEY: "969ce7fa38ef64dc21a"
     depends_on:
       - mongo
+
 
   frontend:
     build: ./Frontend

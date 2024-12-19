@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import PasswordInput from '../../components/input/PasswordInput';
 import { validateEmail } from '../../utils/helper';
 import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 const SignUp = () => {
   const [name, setName] = useState<string>("");
@@ -43,7 +44,7 @@ const SignUp = () => {
 
               // Sign Up API Call
               try{
-                const response = await axios.post("http://127.0.0.1:5000/create-account",{
+                const response = await axiosInstance.post("/create-account",{
                     fullName:name,
                     email:email,
                     password:password,
@@ -57,6 +58,7 @@ const SignUp = () => {
                     return;
                 }
                 if(response.data ){
+                    localStorage.setItem("token",response.data.accessToken);
                     navigate("/dashboard")
                 }
             }catch(error){

@@ -9,6 +9,8 @@ from bson.objectid import ObjectId
 import csv
 import pandas as pd
 from dotenv import load_dotenv
+from functools import wraps
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
 
 load_dotenv()
@@ -16,6 +18,14 @@ mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 
 app = Flask(__name__)
 CORS(app) 
+
+# JWT Configuration
+jwt_secret_key = os.getenv("JWT_SECRET_KEY","969ce7fa38ef64dc21a")
+app.config['JWT_SECRET_KEY'] = jwt_secret_key
+jwt = JWTManager(app)
+print(jwt_secret_key)
+print(app)
+
 # Set up MongoDB connection 
 client = MongoClient(mongo_uri) 
 db = client.user_management
@@ -27,6 +37,19 @@ company = db.company
 @app.route('/')
 def hello_world():
     return 'Hello World'
+
+
+# Decorator for admin role
+# def admin_required(fn):
+#     @wraps(fn)
+#     @jwt_required()
+#     def wrapper(*args, **kwargs):
+#         current_user = get_jwt_identity()
+#         print(current_user)
+#         if current_user['role'] != 'Admin':
+#             return jsonify({"error": True, "message": "Admin access required"}), 403
+#         return fn(*args, **kwargs)
+#     return wrapper
 
 #Create Account
 @app.route('/create-account', methods=['POST'])
@@ -63,10 +86,13 @@ def create_account():
         }
         users.insert_one(user_data)
 
+         # Create JWT token
+        access_token = create_access_token(identity={"email": email, "role": role})
         return jsonify({
             "error": False,
-            "user": {"fullName": full_name, "email": email},
-            "message": "Registration Successful"
+            "email": email,
+            "accessToken": access_token,
+            "message": "Login Successful",
         })
     except Exception as e:
         return jsonify({"error": True, "message": "Server Error: " + str(e)})
@@ -79,6 +105,7 @@ def login():
     data = request.json
     email = data.get('email')
     password = data.get('password')
+    role = data.get('role')
 
     if not email:
         return jsonify({"error": True, "message": "Email is required"})
@@ -93,9 +120,12 @@ def login():
         return jsonify({"error": True, "message": "User not found"})
     
     if user_info['password'] == password and user_info['email'] == email:
+         # Create JWT token
+        access_token = create_access_token(identity={"email": email, "role": user_info['role']})
         return jsonify({
             "error": False,
             "email": email,
+            "accessToken": access_token,
             "message": "Login Successful",
         })
     else:
@@ -129,7 +159,7 @@ def get_user():
         return jsonify({"error": str(e)})
     
 @app.route('/deleteEmploy/<string:user_id>', methods=['DELETE'])
-def delete_employee(user_id):
+def delete_user(user_id):
     try:
         # Convert user_id to ObjectId 
         user = users.find_one({'_id': ObjectId(user_id)})
@@ -160,7 +190,7 @@ def delete_employee(user_id):
         return jsonify({"error": str(e)})
     
 @app.route('/updateEmploy', methods=['PUT'])
-def update_employee():
+def update_user():
     try:
         data = request.json
         user_id = data.get('_id')
@@ -265,7 +295,7 @@ def delete_company(_id):
     except Exception as e:
         return
     
-@app.route('/updateEmploy', methods=['PUT'])
+@app.route('/updateCompany', methods=['PUT'])
 def update_company():
     try:
         # Parse the request JSON

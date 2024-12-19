@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { MdClose } from "react-icons/md";
+import axiosInstance from "../../utils/axiosInstance";
 
 interface UserData {
   fullName: string;
@@ -32,8 +33,8 @@ const AddEditUsers = ({userData,getData,type,onClose,allCompany}:AddEditUsersPro
   //Add User
   const addUser = async () => {
     try {
-        const response = await axios.post(
-            "http://127.0.0.1:5000/addUser",
+        const response = await axiosInstance.post(
+            "/addUser",
             {
               fullName:name,
               email: email,
@@ -54,8 +55,8 @@ const AddEditUsers = ({userData,getData,type,onClose,allCompany}:AddEditUsersPro
   // Update User
   const editUser = async () => {
     try {
-        const response = await axios.put(
-            "http://127.0.0.1:5000/updateEmploy",
+        const response = await axiosInstance.put(
+            "/updateEmploy",
             {
               _id:_id,
               fullName:name,

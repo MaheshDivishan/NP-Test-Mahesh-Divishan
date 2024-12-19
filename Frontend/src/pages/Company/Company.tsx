@@ -4,6 +4,7 @@ import AddEditEmployee from "./AddEditCompany";
 import Modal from "react-modal";
 import Navbar from "../../components/navbar/navbar";
 import ReactPaginate from "react-paginate";
+import axiosInstance from "../../utils/axiosInstance";
 
 interface Company {
   name: string;
@@ -47,7 +48,7 @@ const Company = () => {
   //get all company data
   const getData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:5000/getCompany");
+      const response = await axiosInstance.get("/getCompany");
       console.log(response);
       setAllCompany(response.data);
     } catch (error) {
@@ -58,8 +59,8 @@ const Company = () => {
   //delete company
   const deleteCompany = async (_id: string) => {
     try {
-      const response = await axios.delete(
-        `http://127.0.0.1:5000/deleteCompany/${_id} `
+      const response = await axiosInstance.delete(
+        `/deleteCompany/${_id} `
       );
 
       getData();

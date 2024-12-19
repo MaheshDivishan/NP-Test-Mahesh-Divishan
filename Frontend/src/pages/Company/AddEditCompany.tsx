@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { MdClose } from "react-icons/md";
+import axiosInstance from "../../utils/axiosInstance";
 
 interface Company {
     name: string;
@@ -28,8 +29,8 @@ const AddEditCompany = ({data,getData,type,onClose}:AddEditCompanyProps) => {
   //Add Company
   const addComapny = async () => {
     try {
-        const response = await axios.post(
-            "http://127.0.0.1:5000/addCompany",
+        const response = await axiosInstance.post(
+            "/addCompany",
             {
               id: id,
               name:name,
@@ -50,8 +51,8 @@ const AddEditCompany = ({data,getData,type,onClose}:AddEditCompanyProps) => {
   // Update Company
   const editCompany = async () => {
     try {
-        const response = await axios.put(
-            "http://127.0.0.1:5000/updateCompany",
+        const response = await axiosInstance.put(
+            "/updateCompany",
             {
               _id:_id,
               name:name,
