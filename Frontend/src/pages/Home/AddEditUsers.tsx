@@ -165,12 +165,17 @@ const AddEditUsers = ({userData,getData,type,onClose,allCompany}:AddEditUsersPro
 
         <div className="flex flex-col gap-2 mt-4">
           <label className="flex text-black text-m">Role</label>
-          <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          <select
             value={role}
             onChange={({ target }) => setRole(target.value)}
-          />
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          >
+            {type === "add"  ? (<option value="">Select Company</option>) : ("")}
+            
+              <option value={"Admin"}>Admin</option>
+              <option value={"User"}>User</option>
+  
+          </select>
         </div>
         <br />
       </div>
