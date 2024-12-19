@@ -12,7 +12,7 @@ Set Up Using Docker:
 
 * Go to the project file and run "docker-compose up"
 
-* Then the project runs on http://localhost:5173/
+* Then the Frontend runs on http://localhost:5173/
 
 Set Up Using Without Docker:
 
@@ -35,6 +35,8 @@ How to Use Application:
 * Then go to the user page and assign users to the company using edit button.
 
 * When uploading an Excel file the company names should include the company database. else the company name will not display in the user    table.
+
+* To display pagination, at least there are 8 users in the table.
 
 
 
