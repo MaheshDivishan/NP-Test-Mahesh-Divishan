@@ -96,7 +96,7 @@ const AddEditUsers = ({userData,getData,type,onClose,allCompany}:AddEditUsersPro
     // }
 
     if (!role) {
-      setError("Please enter the Date of Birth");
+      setError("Please enter the Role");
       return;
     }
 
